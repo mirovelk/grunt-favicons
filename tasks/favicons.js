@@ -68,6 +68,19 @@ module.exports = function(grunt) {
             return ret.stdout.trim();
         };
 
+        // Get source file with exact dimensions if it exists
+        var getSourceIfExists = function (source, dirname, basename, size, ext) {
+            var p = path.join(dirname, basename + "." + size + ext);
+            var src = source;
+            if (fs.existsSync(p)) {
+                grunt.log.write('\n > getting ' + size + ext + '... ');
+                src = p;
+            } else if (missingResolutions.indexOf(size) < 0) {
+                missingResolutions.push(size);
+            }
+            return src;
+        }
+
         var combine = function(src, dest, size, fname, additionalOpts, padding) {
             var out = [
                 src,
@@ -159,12 +172,8 @@ module.exports = function(grunt) {
 
                     // regular png
                     ['16x16', '32x32', '48x48'].forEach(function(size) {
-                        var p = path.join(dirname, basename + "." + size + ext);
+                        var src = getSourceIfExists(source, dirname, basename, size, ext);
                         var saveTo = path.join(f.dest, size + '.png');
-                        var src = source;
-                        if (fs.existsSync(p)) {
-                            src = p;
-                        }
                         convert([src, '-resize', size, saveTo]);
                         files.push(saveTo);
                     });
@@ -182,7 +191,8 @@ module.exports = function(grunt) {
 
                     // 64x64 favicon.png higher priority than .ico
                     grunt.log.write('favicon.png... ');
-                    convert([source, '-resize', "64x64", path.join(f.dest, 'favicon.png')]);
+                    var src = getSourceIfExists(source, dirname, basename, '64x64', ext);
+                    convert([src, '-resize', '64x64', path.join(f.dest, 'favicon.png')]);
                     grunt.log.ok();
                 }
 
@@ -196,55 +206,65 @@ module.exports = function(grunt) {
 
                     // 57x57: iPhone non-retina, Android 2.1+
                     grunt.log.write('apple-touch-icon.png... ');
-                    convert(combine(source, f.dest, "57x57", "apple-touch-icon.png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '57x57', ext);
+                    convert(combine(src, f.dest, '57x57', "apple-touch-icon.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     if (options.precomposed) {
                         grunt.log.write('apple-touch-icon' + prefix + '.png... ');
-                        convert(combine(source, f.dest, "57x57", "apple-touch-icon" + prefix + ".png", additionalOpts, options.appleTouchPadding));
+                        var src = getSourceIfExists(source, dirname, basename, '57x57', ext);
+                        convert(combine(src, f.dest, '57x57', "apple-touch-icon" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                         grunt.log.ok();
                     }
 
                     // 60x60: iPhone iOS 7 without size
                     grunt.log.write('apple-touch-icon-60x60-precomposed.png... ');
-                    convert(combine(source, f.dest, "60x60", "apple-touch-icon-60x60-precomposed.png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '60x60', ext);
+                    convert(combine(src, f.dest, '60x60', "apple-touch-icon-60x60-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 72x72: iPad non-retina, iOS 6 and lower
                     grunt.log.write('apple-touch-icon-72x72' + prefix + '.png... ');
-                    convert(combine(source, f.dest, "72x72", "apple-touch-icon-72x72" + prefix + ".png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '72x72', ext);
+                    convert(combine(src, f.dest, '72x72', "apple-touch-icon-72x72" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 76x76: iPad non-retina, iOS 7 and higher
                     grunt.log.write('apple-touch-icon-76x76-precomposed.png... ');
-                    convert(combine(source, f.dest, "76x76", "apple-touch-icon-76x76-precomposed.png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '76x76', ext);
+                    convert(combine(src, f.dest, '76x76', "apple-touch-icon-76x76-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 114x114: iPhone retina, iOS 6 and lower
                     grunt.log.write('apple-touch-icon-114x114' + prefix + '.png... ');
-                    convert(combine(source, f.dest, "114x114", "apple-touch-icon-114x114" + prefix + ".png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '114x114', ext);
+                    convert(combine(src, f.dest, "114x114", "apple-touch-icon-114x114" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 120x120: iPhone retina, iOS 7 and higher
                     grunt.log.write('apple-touch-icon-120x120-precomposed.png... ');
-                    convert(combine(source, f.dest, "120x120", "apple-touch-icon-120x120-precomposed.png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '120x120', ext);
+                    convert(combine(src, f.dest, "120x120", "apple-touch-icon-120x120-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 144x144: iPad retina, iOS 6 and lower
                     grunt.log.write('apple-touch-icon-144x144' + prefix + '.png... ');
-                    convert(combine(source, f.dest, "144x144", "apple-touch-icon-144x144" + prefix + ".png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '144x144', ext);
+                    convert(combine(src, f.dest, "144x144", "apple-touch-icon-144x144" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 152x152: iPad retina, iOS 7 and higher
                     grunt.log.write('apple-touch-icon-152x152-precomposed.png... ');
-                    convert(combine(source, f.dest, "152x152", "apple-touch-icon-152x152-precomposed.png", additionalOpts, options.appleTouchPadding));
+                    var src = getSourceIfExists(source, dirname, basename, '152x152', ext);
+                    convert(combine(src, f.dest, "152x152", "apple-touch-icon-152x152-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
                 }
 
                 // 228x228: Coast
                 if (options.coast) {
                     grunt.log.write('coast-icon-228x228.png... ');
-                    convert(combine(source, f.dest, "228x228", "coast-icon-228x228.png", additionalOpts));
+                    var src = getSourceIfExists(source, dirname, basename, '228x228', ext);
+                    convert(combine(src, f.dest, "228x228", "coast-icon-228x228.png", additionalOpts));
                     grunt.log.ok();
                 }
 
@@ -264,7 +284,8 @@ module.exports = function(grunt) {
                         var dhalf = "circle "+size/2+","+size/2+" "+size/2+",1";
                         var fifname = "firefox-icon-" + dimensions + ".png";
                         grunt.log.write(fifname + '... ');
-                        convert(combine(source, f.dest, dimensions, fifname, []));
+                        var src = getSourceIfExists(source, dirname, basename, dimensions, ext);
+                        convert(combine(src, f.dest, dimensions, fifname, []));
 
                         if (options.firefoxRound) {
                             convert(["-size", dimensions, "xc:none", "-fill", path.join(f.dest, fifname), "-draw", '"'+dhalf+'"', path.join(f.dest, fifname)]);
