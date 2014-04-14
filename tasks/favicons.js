@@ -37,6 +37,9 @@ module.exports = function(grunt) {
             firefoxManifest: ""
         });
 
+        // Array of icon sizes created without pixel perfect input (hint for designers to add them)
+        var missingResolutions = [];
+
         // Execute external command
         var execute = function(cmd) {
             if (options.debug) {
