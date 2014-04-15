@@ -72,6 +72,23 @@ module.exports = function(grunt) {
                 },
                 src: 'test/img.jpg',
                 dest: 'test/out'
+            },
+            stage5: {
+                options: {
+                    html: 'test/out/pixelperfect.html',
+                    HTMLPrefix: '{{ releaseDir }}/icons/',
+                    trueColor: true,
+                    sharp: 0,
+                    precomposed: true,
+                    windowsTile: true,
+                    tileBlackWhite: false,
+                    tileColor: '#e40046',
+                    coast: true,
+                    appleTouchPadding: 0,
+                    firefox: true
+                },
+                src: 'test/stage5/favicon.png',
+                dest: 'test/out'
             }
         },
 
@@ -111,8 +128,9 @@ module.exports = function(grunt) {
     grunt.registerTask('stage2', ['clean', 'copy', 'favicons:stage2', 'nodeunit:stage2']);
     grunt.registerTask('stage3', ['clean', 'copy:php', 'copy:manifest', 'favicons:stage3', 'nodeunit:stage3']);
     grunt.registerTask('stage4', ['clean', 'favicons:stage4', 'nodeunit:stage4']);
+    grunt.registerTask('stage5', ['clean', 'favicons:stage5']);
 
-    grunt.registerTask('test', ['jshint', 'stage1', 'stage2', 'stage3', 'stage4', 'clean']);
+    grunt.registerTask('test', ['jshint', 'stage1', 'stage2', 'stage3', 'stage4', 'stage5', 'clean']);
     grunt.registerTask('default', ['test']);
 
 };
