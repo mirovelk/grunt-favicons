@@ -34,7 +34,8 @@ module.exports = function(grunt) {
             apple: true,
             regular: true,
             firefoxRound: false,
-            firefoxManifest: ""
+            firefoxManifest: "",
+            reportMissingResolutions: true
         });
 
         // Array of icon sizes created without pixel perfect input (hint for designers to add them)
@@ -76,13 +77,13 @@ module.exports = function(grunt) {
             var p = path.join(dirname, basename + "." + size + ext);
             var src = source;
             if (fs.existsSync(p)) {
-                grunt.log.write('\n > getting ' + size + ext + '... ');
+                grunt.log.write('\n > getting ' + size + '... ');
                 src = p;
             } else if (missingResolutions.indexOf(size) < 0) {
                 missingResolutions.push(size);
             }
             return src;
-        }
+        };
 
         var combine = function(src, dest, size, fname, additionalOpts, padding) {
             var out = [
@@ -157,6 +158,9 @@ module.exports = function(grunt) {
 
                 var resolmap = {};
 
+                // Current source file (input source or other resolutions)
+                var src;
+
                 // Create resized version of source image
                 // 16x16: desktop browsers, address bar, tabs
                 // 32x32: safari reading list, non-retina iPhone, windows 7+ taskbar
@@ -175,7 +179,7 @@ module.exports = function(grunt) {
 
                     // regular png
                     ['16x16', '32x32', '48x48'].forEach(function(size) {
-                        var src = getSourceIfExists(source, dirname, basename, size, ext);
+                        src = getSourceIfExists(source, dirname, basename, size, ext);
                         var saveTo = path.join(f.dest, size + '.png');
                         convert([src, '-resize', size, saveTo]);
                         files.push(saveTo);
@@ -194,7 +198,7 @@ module.exports = function(grunt) {
 
                     // 64x64 favicon.png higher priority than .ico
                     grunt.log.write('favicon.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '64x64', ext);
+                    src = getSourceIfExists(source, dirname, basename, '64x64', ext);
                     convert([src, '-resize', '64x64', path.join(f.dest, 'favicon.png')]);
                     grunt.log.ok();
                 }
@@ -209,56 +213,56 @@ module.exports = function(grunt) {
 
                     // 57x57: iPhone non-retina, Android 2.1+
                     grunt.log.write('apple-touch-icon.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '57x57', ext);
+                    src = getSourceIfExists(source, dirname, basename, '57x57', ext);
                     convert(combine(src, f.dest, '57x57', "apple-touch-icon.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     if (options.precomposed) {
                         grunt.log.write('apple-touch-icon' + prefix + '.png... ');
-                        var src = getSourceIfExists(source, dirname, basename, '57x57', ext);
+                        src = getSourceIfExists(source, dirname, basename, '57x57', ext);
                         convert(combine(src, f.dest, '57x57', "apple-touch-icon" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                         grunt.log.ok();
                     }
 
                     // 60x60: iPhone iOS 7 without size
                     grunt.log.write('apple-touch-icon-60x60-precomposed.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '60x60', ext);
+                    src = getSourceIfExists(source, dirname, basename, '60x60', ext);
                     convert(combine(src, f.dest, '60x60', "apple-touch-icon-60x60-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 72x72: iPad non-retina, iOS 6 and lower
                     grunt.log.write('apple-touch-icon-72x72' + prefix + '.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '72x72', ext);
+                    src = getSourceIfExists(source, dirname, basename, '72x72', ext);
                     convert(combine(src, f.dest, '72x72', "apple-touch-icon-72x72" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 76x76: iPad non-retina, iOS 7 and higher
                     grunt.log.write('apple-touch-icon-76x76-precomposed.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '76x76', ext);
+                    src = getSourceIfExists(source, dirname, basename, '76x76', ext);
                     convert(combine(src, f.dest, '76x76', "apple-touch-icon-76x76-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 114x114: iPhone retina, iOS 6 and lower
                     grunt.log.write('apple-touch-icon-114x114' + prefix + '.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '114x114', ext);
+                    src = getSourceIfExists(source, dirname, basename, '114x114', ext);
                     convert(combine(src, f.dest, "114x114", "apple-touch-icon-114x114" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 120x120: iPhone retina, iOS 7 and higher
                     grunt.log.write('apple-touch-icon-120x120-precomposed.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '120x120', ext);
+                    src = getSourceIfExists(source, dirname, basename, '120x120', ext);
                     convert(combine(src, f.dest, "120x120", "apple-touch-icon-120x120-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 144x144: iPad retina, iOS 6 and lower
                     grunt.log.write('apple-touch-icon-144x144' + prefix + '.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '144x144', ext);
+                    src = getSourceIfExists(source, dirname, basename, '144x144', ext);
                     convert(combine(src, f.dest, "144x144", "apple-touch-icon-144x144" + prefix + ".png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
 
                     // 152x152: iPad retina, iOS 7 and higher
                     grunt.log.write('apple-touch-icon-152x152-precomposed.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '152x152', ext);
+                    src = getSourceIfExists(source, dirname, basename, '152x152', ext);
                     convert(combine(src, f.dest, "152x152", "apple-touch-icon-152x152-precomposed.png", additionalOpts, options.appleTouchPadding));
                     grunt.log.ok();
                 }
@@ -266,7 +270,7 @@ module.exports = function(grunt) {
                 // 228x228: Coast
                 if (options.coast) {
                     grunt.log.write('coast-icon-228x228.png... ');
-                    var src = getSourceIfExists(source, dirname, basename, '228x228', ext);
+                    src = getSourceIfExists(source, dirname, basename, '228x228', ext);
                     convert(combine(src, f.dest, "228x228", "coast-icon-228x228.png", additionalOpts));
                     grunt.log.ok();
                 }
@@ -287,7 +291,7 @@ module.exports = function(grunt) {
                         var dhalf = "circle "+size/2+","+size/2+" "+size/2+",1";
                         var fifname = "firefox-icon-" + dimensions + ".png";
                         grunt.log.write(fifname + '... ');
-                        var src = getSourceIfExists(source, dirname, basename, dimensions, ext);
+                        src = getSourceIfExists(source, dirname, basename, dimensions, ext);
                         convert(combine(src, f.dest, dimensions, fifname, []));
 
                         if (options.firefoxRound) {
@@ -350,10 +354,11 @@ module.exports = function(grunt) {
                         }
                     }
 
-                    convert(combine(source, f.dest, "70x70", "windows-tile-70x70.png", additionalOpts));
-                    convert(combine(source, f.dest, "144x144", "windows-tile-144x144.png", additionalOpts));
-                    convert(combine(source, f.dest, "150x150", "windows-tile-150x150.png", additionalOpts));
-                    convert(combine(source, f.dest, "310x310", "windows-tile-310x310.png", additionalOpts));
+                    // Generate tiles
+                    ['70x70', '144x144', '150x150', '310x310'].forEach(function(size) {
+                        src = getSourceIfExists(source, dirname, basename, size, ext);
+                        convert(combine(src, f.dest, size, 'windows-tile-' + size + '.png', additionalOpts));
+                    });
                     grunt.log.ok();
 
                 }
@@ -418,6 +423,10 @@ module.exports = function(grunt) {
                     grunt.file.write(options.html, out);
 
                     grunt.log.ok();
+
+                    if (missingResolutions.length > 0 && options.reportMissingResolutions) {
+                        grunt.log.warn('Missing resolutions: ' + grunt.log.wordlist(missingResolutions));
+                    }
                 }
 
                 // Cleanup
